@@ -6,6 +6,7 @@ import spark.embeddedserver.EmbeddedServers;
 import spark.embeddedserver.jetty.EmbeddedJettyFactory;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static spark.Spark.*;
@@ -51,8 +52,13 @@ public class Metrics {
         });
 
         get("/getContent", ((request, response) -> {
-            Elastic.send("", new JsonObject().add("timestamp", new Date().toString()));
-            Thread.sleep(500);
+            JsonObject json = new JsonObject();
+
+            json.add("message", "SUCCESS")
+                    .add("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSSSSS'Z'").format(new Date()))
+                    .add("url","/getContent");
+            Elastic.sendPOST("http://hauser.corp.tele2.com:9200/ugis/_doc/", json.toString());
+//            Thread.sleep(500);
             return "SUCCESS";
         }));
 
