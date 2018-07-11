@@ -8,15 +8,16 @@ import spark.embeddedserver.jetty.EmbeddedJettyFactory;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static spark.Spark.*;
 
 public class Metrics {
     private static StatisticsHandler statisticsHandler;
 
-    public static void main(String[] args) throws  Exception{
+    public static void main(String[] args) throws Exception {
         EmbeddedServers.add(EmbeddedServers.Identifiers.JETTY, new EmbeddedJettyFactory((i, j, k) -> {
-            Server server =  new Server();
+            Server server = new Server();
             statisticsHandler = new StatisticsHandler();
             statisticsHandler.setServer(server);
             return server;
@@ -53,10 +54,12 @@ public class Metrics {
 
         get("/getContent", ((request, response) -> {
             JsonObject json = new JsonObject();
-
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSSSSS'Z'");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String timestamp = simpleDateFormat.format(new Date());
             json.add("message", "SUCCESS")
-                    .add("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSSSSS'Z'").format(new Date()))
-                    .add("url","/getContent");
+                    .add("timestamp", timestamp)
+                    .add("url", "/getContent");
             Elastic.sendPOST("", json.toString());
 //            Thread.sleep(500);
             return "SUCCESS";
