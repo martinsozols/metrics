@@ -57,7 +57,7 @@ public class Metrics {
             json.add("message", "SUCCESS")
                     .add("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd.SSSSSS'Z'").format(new Date()))
                     .add("url","/getContent");
-            Elastic.sendPOST("http://hauser.corp.tele2.com:9200/ugis/_doc/", json.toString());
+            Elastic.sendPOST("", json.toString());
 //            Thread.sleep(500);
             return "SUCCESS";
         }));
